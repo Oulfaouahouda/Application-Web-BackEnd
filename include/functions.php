@@ -4,7 +4,7 @@ function connect() {
   // 1- Connexion avec la BD
   $servername = "localhost";
   $DBuser = "root";
-  $DBpassword = "";
+  $DBpassword = "root";
   $DBname = "e-commerce";
 
   try {
