@@ -1,133 +1,31 @@
 <?php
-
-function connect() {
-  // 1- Connexion avec la BD
-  $servername = "localhost";
-  $DBuser = "root";
-  $DBpassword = "";
-  $DBname = "e-commerce";
-
-  try {
-      $conn = new PDO("mysql:host=$servername;dbname=$DBname", $DBuser, $DBpassword);
-      // set the PDO error mode to exception
-      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      //echo "Connected successfully";
-    } catch(PDOException $e) {
-      echo "Connection failed: " . $e->getMessage();
-    }
-
-    return $conn;
-}
-
-function getAllCategories() {
-    
-    // 1- Connexion avec la BD / Appel fonction connect
+// Fonction pour récupérer les détails d'un produit par son ID
+function getProductById($productId) {
     $conn = connect();
     
-    // 2- Creation de la requette
-    $requette = "SELECT * FROM categorie";
-    
-    // 3- Execution de la requette
-    $resultat = $conn->query($requette);
-    
-    // 4- Resultat de la requette
-    $categorie = $resultat->fetchAll();
-    
-    //var_dump($categorie);
-    
+    // Préparez la requête SQL pour récupérer les détails du produit par son ID
+    $sql = "SELECT * FROM product WHERE id = :id";
 
-    return $categorie;
-}
+    // Préparez la requête pour exécution
+    $stmt = $conn->prepare($sql);
 
-function getAllProducts() {
-    
-    // 1- Connexion avec la BD / Appel fonction connect
-    $conn = connect();
-    
-    // 2- Creation de la requette
-    $requette = "SELECT * FROM product";
-    
-    // 3- Execution de la requette
-    $resultat = $conn->query($requette);
-    
-    // 4- Resultat de la requette
-    $product = $resultat->fetchAll();
-    
-    //var_dump($product);
-    
+    // Liaison des paramètres
+    $stmt->bindParam(':id', $productId);
 
+    // Exécutez la requête
+    $stmt->execute();
+
+    // Récupérez le résultat sous forme de tableau associatif
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Retournez les détails du produit
     return $product;
 }
 
-function searchProduct($keywords) {
-  // 1- Connexion avec la BD / Appel fonction connect
-  $conn = connect();
-      // 2- Creation de la requette
-  $requette = "SELECT * FROM product WHERE name LIKE '%$keywords%' ";
-    
-  // 3- Execution de la requette
-  $resultat = $conn->query($requette);
-  
-  // 4- Resultat de la requette
-  $product = $resultat->fetchAll();
-  
-  //var_dump($product);
-  return $product;
-
-}
-
-function getProductById($id) {
-      $conn = connect();
-
-      $requette = "SELECT * FROM product WHERE id=$id";
-
-      $resultat = $conn->query($requette);
-
-      $product = $resultat->fetch(); //fetch c pour ramener un seul element de la bd contrairement à fetchAll
-
-      return $product;
-}
-
-function AddVisiteur($data){
-      $conn = connect();
-      $passwordHash = md5($data['password']);
-      $requette = "INSERT INTO visiteur(full_name,email,password,country,city) VALUES('".$data['full_name']."','".$data['email']."','".$passwordHash."','".$data['country']."','".$data['city']."')";
-
-      $resultat = $conn->query($requette); 
-
-      if ($resultat) {
-        return true;
-      }
-      else {
-        return false; 
-      }
-}
-
-function ConnectVisiteur($data){
-    $conn = connect();
-
-    $email = $data['email'];
-    $password = md5($data['password']);
-    $requette = "SELECT * FROM visiteur WHERE email='$email' AND password='$password'";
-
-    $resultat = $conn->query($requette);
-
-    $user = $resultat->fetch(); //fetch c pour ramener un seul element de la bd contrairement à fetchAll
-
-    return $user;
-}
-
-function ConnectAdmin($data) {
-  
-    $conn = connect();
-    $email = $data['email'];
-    $password = md5($data['password']);
-    $requette = "SELECT * FROM administrateur WHERE email='$email' AND password='$password'";
-
-    $resultat = $conn->query($requette);
-
-    $user = $resultat->fetch(); //fetch c pour ramener un seul element de la bd contrairement à fetchAll
-
-    return $user;
+function jsonResponse($data, $status = 200) {
+    header("Content-Type: application/json");
+    http_response_code($status);
+    echo json_encode($data);
+    exit;
 }
 ?>
