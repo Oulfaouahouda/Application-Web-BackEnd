@@ -6,8 +6,8 @@ include '../../include/functions.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 $email = $data['email'];
-$password = md5($data['password']); // Utiliser md5 pour correspondre avec l'ajout d'utilisateur
-
+// $password = md5($data['password']); // Utiliser md5 pour correspondre avec l'ajout d'utilisateur
+$password = $data['password'];
 $conn = connect();
 $query = "SELECT * FROM users WHERE email = ? AND password = ?";
 $stmt = $conn->prepare($query);
