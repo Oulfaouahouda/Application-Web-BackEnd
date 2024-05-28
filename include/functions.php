@@ -4,7 +4,7 @@ function connect() {
   // 1- Connexion avec la BD
   $servername = "localhost";
   $DBuser = "root";
-  $DBpassword = "root";
+  $DBpassword = "";
   $DBname = "e-commerce";
 
   try {
@@ -129,5 +129,13 @@ function ConnectAdmin($data) {
     $user = $resultat->fetch(); //fetch c pour ramener un seul element de la bd contrairement à fetchAll
 
     return $user;
+}
+?>
+
+<?php
+function jsonResponse($data) {
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
 }
 ?>
